@@ -1,3 +1,6 @@
+/** The API's page size (backend #11); also used to page a plain array. */
+export const PAGE_SIZE = 10;
+
 /** DRF's paginated list shape (backend issue #11). */
 export interface Paginated<T> {
   count: number;
@@ -28,12 +31,12 @@ export interface Page<T> {
 export function toPage<T>(
   data: ListResponse<T>,
   page: number,
-  pageSize = 10,
+  pageSize = PAGE_SIZE,
 ): Page<T> {
   const current = Number.isFinite(page) && page >= 1 ? Math.floor(page) : 1;
   const size = Number.isFinite(pageSize)
     ? Math.max(1, Math.floor(pageSize))
-    : 10;
+    : PAGE_SIZE;
 
   if (Array.isArray(data)) {
     const start = (current - 1) * size;

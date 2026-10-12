@@ -1,43 +1,16 @@
 import { Link, Navigate, useSearchParams } from 'react-router';
 import { ApiError } from '../../api/client.ts';
-import { toPage } from '../../api/pagination.ts';
-import type { Blog } from '../../api/types.ts';
+import { PAGE_SIZE, toPage } from '../../api/pagination.ts';
 import { useAuth } from '../../auth/AuthContext.ts';
 import { EmptyState } from '../../components/EmptyState.tsx';
 import { ErrorState } from '../../components/ErrorState.tsx';
 import { PageTitle } from '../../components/PageTitle.tsx';
 import { Pagination } from '../../components/Pagination.tsx';
 import { Spinner } from '../../components/Spinner.tsx';
-import { BlogMeta } from './BlogMeta.tsx';
-import { excerpt } from './format.ts';
+import { parsePage } from '../../routeParams.ts';
+import { BlogCard } from './BlogCard.tsx';
 import { canCreateBlog } from './permissions.ts';
 import { useBlogs } from './queries.ts';
-
-/** The API's page size (backend #11); also used to page a plain array. */
-const PAGE_SIZE = 10;
-
-/** `?page=` as a positive integer; anything else is page 1. */
-function parsePage(raw: string | null): number {
-  const page = Number(raw ?? '1');
-  return Number.isSafeInteger(page) && page >= 1 ? page : 1;
-}
-
-function BlogCard({ blog }: { blog: Blog }) {
-  return (
-    <article className="py-7">
-      <h2 className="text-2xl leading-snug font-semibold tracking-tight">
-        <Link
-          to={`/blogs/${blog.id}`}
-          className="rounded-sm text-ink hover:text-moss"
-        >
-          {blog.title}
-        </Link>
-      </h2>
-      <BlogMeta blog={blog} />
-      <p className="mt-3 max-w-prose text-ink-soft">{excerpt(blog.content)}</p>
-    </article>
-  );
-}
 
 function BlogList() {
   const { user } = useAuth();

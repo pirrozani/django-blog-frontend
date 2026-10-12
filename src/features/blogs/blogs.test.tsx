@@ -14,7 +14,7 @@ import {
 import { server } from '../../mocks/server.ts';
 import { renderRoute } from '../../test/renderRoute.tsx';
 import { excerpt } from './format.ts';
-import { newestFirst } from './queries.ts';
+import { newestFirst } from './order.ts';
 
 const url = (path: string) => `${API_URL}${path}`;
 
