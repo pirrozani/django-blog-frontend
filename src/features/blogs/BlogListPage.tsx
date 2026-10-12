@@ -10,6 +10,7 @@ import { Pagination } from '../../components/Pagination.tsx';
 import { Spinner } from '../../components/Spinner.tsx';
 import { BlogMeta } from './BlogMeta.tsx';
 import { excerpt } from './format.ts';
+import { canCreateBlog } from './permissions.ts';
 import { useBlogs } from './queries.ts';
 
 /** The API's page size (backend #11); also used to page a plain array. */
@@ -39,7 +40,7 @@ function BlogCard({ blog }: { blog: Blog }) {
 }
 
 function BlogList() {
-  const { status } = useAuth();
+  const { user } = useAuth();
   const [searchParams] = useSearchParams();
   const requested = parsePage(searchParams.get('page'));
   const { data, error, isPending, isError, isPlaceholderData, refetch } =
@@ -66,7 +67,7 @@ function BlogList() {
       <EmptyState
         title="No blogs yet"
         action={
-          status === 'authenticated' && (
+          canCreateBlog(user) && (
             <Link
               to="/blogs/new"
               className="font-medium text-moss underline underline-offset-4 hover:text-moss-deep"
@@ -103,9 +104,20 @@ function BlogList() {
 }
 
 export function BlogListPage() {
+  const { user } = useAuth();
   return (
     <section>
-      <PageTitle>Blogs</PageTitle>
+      <div className="flex flex-wrap items-end justify-between gap-4">
+        <PageTitle>Blogs</PageTitle>
+        {canCreateBlog(user) && (
+          <Link
+            to="/blogs/new"
+            className="inline-flex items-center justify-center rounded-md bg-moss px-4 py-2 text-sm font-medium text-paper transition-colors hover:bg-moss-deep"
+          >
+            New blog
+          </Link>
+        )}
+      </div>
       <div className="mt-8">
         <BlogList />
       </div>

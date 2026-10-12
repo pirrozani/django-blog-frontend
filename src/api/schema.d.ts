@@ -180,10 +180,15 @@ export interface components {
              * @description Designates whether the user can log into this admin site.
              */
             readonly is_staff: boolean;
+            /** @description Id of the author this account writes as, or null if it has none. */
+            readonly author_id: number | null;
         };
         AuthTokenRequest: {
             username: string;
             password: string;
+        };
+        AuthorFilterError: {
+            author: string[];
         };
         AuthorSummary: {
             readonly id: number;
@@ -193,7 +198,7 @@ export interface components {
         };
         Blog: {
             readonly id: number;
-            user: number;
+            readonly user: number;
             readonly author: components["schemas"]["AuthorSummary"];
             title: string;
             content: string;
@@ -201,7 +206,6 @@ export interface components {
             readonly created_at: string;
         };
         BlogRequest: {
-            user: number;
             title: string;
             content: string;
         };
@@ -221,8 +225,37 @@ export interface components {
         LoginError: {
             non_field_errors: string[];
         };
+        PaginatedBlogList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["Blog"][];
+        };
+        PaginatedUserList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["User"][];
+        };
         PatchedBlogRequest: {
-            user?: number;
             title?: string;
             content?: string;
         };
@@ -382,7 +415,16 @@ export interface operations {
     };
     Get_Blogs: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description Only blogs by this author id */
+                author?: number;
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
+                /** @description A search term. */
+                search?: string;
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -394,7 +436,16 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Blog"][];
+                    "application/json": components["schemas"]["PaginatedBlogList"];
+                };
+            };
+            /** @description `author` is not an integer */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AuthorFilterError"];
                 };
             };
         };
@@ -424,6 +475,15 @@ export interface operations {
             };
             /** @description Missing or invalid token */
             401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Detail"];
+                };
+            };
+            /** @description The account may not change this resource */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -490,6 +550,15 @@ export interface operations {
                     "application/json": components["schemas"]["Detail"];
                 };
             };
+            /** @description The account may not change this resource */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Detail"];
+                };
+            };
         };
     };
     Delete_Blog: {
@@ -513,6 +582,15 @@ export interface operations {
             };
             /** @description Missing or invalid token */
             401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Detail"];
+                };
+            };
+            /** @description The account may not change this resource */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -550,6 +628,15 @@ export interface operations {
             };
             /** @description Missing or invalid token */
             401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Detail"];
+                };
+            };
+            /** @description The account may not change this resource */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -624,7 +711,14 @@ export interface operations {
     };
     Get_Users: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
+                /** @description A search term. */
+                search?: string;
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -636,7 +730,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["User"][];
+                    "application/json": components["schemas"]["PaginatedUserList"];
                 };
             };
         };
@@ -666,6 +760,15 @@ export interface operations {
             };
             /** @description Missing or invalid token */
             401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Detail"];
+                };
+            };
+            /** @description The account may not change this resource */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -732,6 +835,15 @@ export interface operations {
                     "application/json": components["schemas"]["Detail"];
                 };
             };
+            /** @description The account may not change this resource */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Detail"];
+                };
+            };
         };
     };
     Delete_User: {
@@ -755,6 +867,15 @@ export interface operations {
             };
             /** @description Missing or invalid token */
             401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Detail"];
+                };
+            };
+            /** @description The account may not change this resource */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -799,11 +920,25 @@ export interface operations {
                     "application/json": components["schemas"]["Detail"];
                 };
             };
+            /** @description The account may not change this resource */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Detail"];
+                };
+            };
         };
     };
     Get_User_Blogs: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
+            };
             header?: never;
             path: {
                 /** @description A unique integer value identifying this user. */
@@ -818,7 +953,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Blog"][];
+                    "application/json": components["schemas"]["PaginatedBlogList"];
                 };
             };
         };

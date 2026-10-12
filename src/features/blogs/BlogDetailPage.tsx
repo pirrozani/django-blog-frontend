@@ -1,32 +1,55 @@
+import { useState } from 'react';
 import { Link, useParams } from 'react-router';
 import { ApiError } from '../../api/client.ts';
+import type { Blog } from '../../api/types.ts';
 import { useAuth } from '../../auth/AuthContext.ts';
 import { Button } from '../../components/Button.tsx';
+import { ConfirmDialog } from '../../components/ConfirmDialog.tsx';
+import { errorMessage } from '../../components/errorMessage.ts';
 import { ErrorState } from '../../components/ErrorState.tsx';
-import { NotFoundPage } from '../../components/NotFoundPage.tsx';
 import { PageTitle } from '../../components/PageTitle.tsx';
 import { Spinner } from '../../components/Spinner.tsx';
 import { BlogMeta } from './BlogMeta.tsx';
-import { useBlog } from './queries.ts';
+import { parseBlogId } from './blogId.ts';
+import { BlogNotFound } from './BlogNotFound.tsx';
+import { canChangeBlog } from './permissions.ts';
+import { useBlog, useDeleteBlog } from './queries.ts';
 
-/** The route's `:id` as a positive integer, or `null` when it isn't one. */
-function parseBlogId(raw: string | undefined): number | null {
-  if (!raw || !/^\d+$/.test(raw)) return null;
-  const id = Number(raw);
-  return Number.isSafeInteger(id) && id > 0 ? id : null;
-}
+function BlogActions({ blog }: { blog: Blog }) {
+  const [confirming, setConfirming] = useState(false);
+  const deletion = useDeleteBlog();
 
-function BlogNotFound() {
   return (
-    <NotFoundPage
-      title="Blog not found"
-      message="This blog doesn't exist, or it was deleted."
-    />
+    <div className="mt-6 flex gap-3">
+      <Link
+        to={`/blogs/${blog.id}/edit`}
+        className="inline-flex items-center justify-center rounded-md border border-mist bg-white px-4 py-2 text-sm font-medium text-ink transition-colors hover:border-ink-soft"
+      >
+        Edit
+      </Link>
+      <Button variant="danger" onClick={() => setConfirming(true)}>
+        Delete
+      </Button>
+      <ConfirmDialog
+        open={confirming}
+        title={`Delete "${blog.title}"?`}
+        confirmLabel="Delete"
+        pending={deletion.isPending}
+        error={deletion.isError ? errorMessage(deletion.error) : undefined}
+        onConfirm={() => deletion.mutate(blog)}
+        onCancel={() => {
+          setConfirming(false);
+          deletion.reset();
+        }}
+      >
+        This can't be undone.
+      </ConfirmDialog>
+    </div>
   );
 }
 
 function BlogDetail({ id }: { id: number }) {
-  const { status } = useAuth();
+  const { user } = useAuth();
   const { data: blog, error, isPending, isError, refetch } = useBlog(id);
 
   if (isPending) return <Spinner label="Loading the blog…" />;
@@ -56,20 +79,7 @@ function BlogDetail({ id }: { id: number }) {
       </div>
       <BlogMeta blog={blog} className="mt-4" />
 
-      {status === 'authenticated' && (
-        <div className="mt-6 flex gap-3">
-          <Link
-            to={`/blogs/${blog.id}/edit`}
-            className="inline-flex items-center justify-center rounded-md border border-mist bg-white px-4 py-2 text-sm font-medium text-ink transition-colors hover:border-ink-soft"
-          >
-            Edit
-          </Link>
-          {/* Deleting is wired up in #6. */}
-          <Button variant="danger" disabled>
-            Delete
-          </Button>
-        </div>
-      )}
+      {canChangeBlog(user, blog) && <BlogActions blog={blog} />}
 
       <div className="mt-10 max-w-prose border-t border-mist pt-8 font-serif text-lg leading-8 break-words whitespace-pre-wrap text-ink">
         {blog.content}
