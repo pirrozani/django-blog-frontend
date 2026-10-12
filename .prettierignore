@@ -1,0 +1,10 @@
+dist/
+coverage/
+node_modules/
+package-lock.json
+src/api/schema.d.ts
+.claude/
+docs/
+CLAUDE.md
+KICKOFF_PROMPT.md
+.github/
