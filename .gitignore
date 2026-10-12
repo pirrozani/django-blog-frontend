@@ -1,9 +1,12 @@
 # Dependencies and build output
 node_modules/
 dist/
+dist-ssr/
 .wrangler/
 coverage/
+.playwright-mcp/
 *.tsbuildinfo
+*.local
 
 # Local env files (VITE_API_URL is public, but local values stay local)
 .env
@@ -15,8 +18,15 @@ coverage/
 .claude/settings.local.json
 
 # Logs and editors
+logs/
 *.log
+npm-debug.log*
 .DS_Store
 .vscode/*
 !.vscode/extensions.json
 .idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
