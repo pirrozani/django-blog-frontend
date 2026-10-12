@@ -75,6 +75,7 @@ Local backend: `cd ../../django_api_project && uv run python manage.py runserver
 | `/issue <description>` | Investigate and draft a GitHub issue from the fix template (asks before creating) |
 | `/resolve-issue <N>` | Implement issue #N on `feature/<N>-<slug>`, verify its acceptance criteria, report on the issue |
 | `/pr` | Health check, then open a PR to `develop` with `Closes #N` (asks before pushing) |
+| `/release [major\|minor\|patch\|<x.y.z>] [--dry-run] [--yes]` | Ship `develop` → `main`: bump, release PR (merge commit), tag, GitHub release, back-merge; one confirmation (none with `--yes`) |
 | `/review-pr [N]` | Review PR #N (or the current branch) against its issue and these rules, with a verdict |
 | `/health-check` | lint, typecheck, test, build, secret scan, in one read-only pass |
 | `/api-sync [--write]` | Regenerate API types from the backend schema and diff them; diff the contract doc with the backend repo |
