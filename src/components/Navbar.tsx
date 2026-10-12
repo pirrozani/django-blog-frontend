@@ -1,4 +1,6 @@
+import { useState } from 'react';
 import { Link, NavLink } from 'react-router';
+import { useAuth } from '../auth/AuthContext.ts';
 
 const navLinkClass = ({ isActive }: { isActive: boolean }) =>
   [
@@ -8,7 +10,40 @@ const navLinkClass = ({ isActive }: { isActive: boolean }) =>
       : 'text-ink-soft hover:text-ink',
   ].join(' ');
 
-// The login link becomes the username + Log out once auth lands (#4).
+function AccountMenu() {
+  const { status, user, logout } = useAuth();
+  const [loggingOut, setLoggingOut] = useState(false);
+
+  if (status === 'loading') return null;
+  if (status === 'anonymous' || !user) {
+    return (
+      <Link
+        to="/login"
+        className="rounded-sm font-medium text-moss hover:text-moss-deep"
+      >
+        Log in
+      </Link>
+    );
+  }
+
+  return (
+    <span className="flex items-baseline gap-3">
+      <span className="text-ink-soft">@{user.username}</span>
+      <button
+        type="button"
+        disabled={loggingOut}
+        onClick={() => {
+          setLoggingOut(true);
+          void logout().finally(() => setLoggingOut(false));
+        }}
+        className="rounded-sm font-medium text-moss hover:text-moss-deep disabled:opacity-60"
+      >
+        {loggingOut ? 'Logging out…' : 'Log out'}
+      </button>
+    </span>
+  );
+}
+
 export function Navbar() {
   return (
     <header className="border-b border-mist">
@@ -26,12 +61,7 @@ export function Navbar() {
           <NavLink to="/users" className={navLinkClass}>
             Authors
           </NavLink>
-          <Link
-            to="/login"
-            className="rounded-sm font-medium text-moss hover:text-moss-deep"
-          >
-            Log in
-          </Link>
+          <AccountMenu />
         </nav>
       </div>
     </header>

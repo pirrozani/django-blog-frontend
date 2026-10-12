@@ -72,15 +72,20 @@ export function parseErrorBody(body: unknown): ApiErrorInit {
 }
 
 let getToken: () => string | null = () => null;
-let onUnauthorized: (() => void) | null = null;
+let onUnauthorized: ((sentToken: string) => void) | null = null;
 
 /** Registered by the auth provider: where `apiFetch` reads the token from. */
 export function setAuthTokenGetter(getter: () => string | null): void {
   getToken = getter;
 }
 
-/** Registered by the auth provider: called on a 401 for a request that sent a token. */
-export function setOnUnauthorized(callback: (() => void) | null): void {
+/**
+ * Registered by the auth provider: called on a 401 for a request that sent a
+ * token, with that token (so a late 401 for an old token can be ignored).
+ */
+export function setOnUnauthorized(
+  callback: ((sentToken: string) => void) | null,
+): void {
   onUnauthorized = callback;
 }
 
@@ -141,7 +146,7 @@ export async function apiFetch<T>(
   const data = text ? parseJson(text) : undefined;
 
   if (!response.ok) {
-    if (response.status === 401 && token) onUnauthorized?.();
+    if (response.status === 401 && token) onUnauthorized?.(token);
     throw new ApiError(
       response.status,
       parseErrorBody(data),

@@ -189,5 +189,6 @@ describe('apiFetch', () => {
     const error = await catchApiError(apiFetch('/api/auth/me/'));
     expect(error.status).toBe(401);
     expect(onUnauthorized).toHaveBeenCalledTimes(1);
+    expect(onUnauthorized).toHaveBeenCalledWith('revoked');
   });
 });
