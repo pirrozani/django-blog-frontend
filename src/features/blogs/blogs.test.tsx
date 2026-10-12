@@ -13,7 +13,7 @@ import {
 } from '../../mocks/fixtures.ts';
 import { server } from '../../mocks/server.ts';
 import { renderRoute } from '../../test/renderRoute.tsx';
-import { excerpt } from './format.ts';
+import { excerpt, paragraphs, readingMinutes } from './format.ts';
 import { newestFirst } from './order.ts';
 
 const url = (path: string) => `${API_URL}${path}`;
@@ -124,9 +124,10 @@ describe('BlogListPage', () => {
     expect(
       within(card).getByRole('link', { name: 'Ada Lovelace' }),
     ).toHaveAttribute('href', `/users/${AUTHOR.id}`);
-    expect(within(card).getByText(/^Authored by/)).toHaveTextContent(
-      /^Authored by Ada Lovelace on /,
+    expect(within(card).getByText(/^By/)).toHaveTextContent(
+      /^By Ada Lovelace$/,
     );
+    expect(card.querySelector('time')).toHaveAttribute('datetime');
     expect(within(card).getByText(/^x+…$/).textContent).toHaveLength(201);
     // One page: no pagination.
     expect(
@@ -225,18 +226,22 @@ describe('BlogDetailPage', () => {
     );
   }
 
-  it('shows the full content with its line breaks', async () => {
+  it('shows the full content in paragraphs, keeping line breaks', async () => {
     blogReturns();
     renderRoute('/blogs/5');
 
     expect(
       await screen.findByRole('heading', { level: 1, name: 'Hello there' }),
     ).toBeInTheDocument();
-    const body = screen.getByText(
-      (_, element) =>
-        element?.tagName === 'DIV' && element.textContent === content,
+    const paragraph = (text: string) =>
+      screen.getByText(
+        (_, element) =>
+          element?.tagName === 'P' && element.textContent === text,
+      );
+    expect(paragraph('First line.')).toHaveClass('whitespace-pre-wrap');
+    expect(paragraph('Second paragraph,\n  indented.')).toHaveClass(
+      'whitespace-pre-wrap',
     );
-    expect(body).toHaveClass('whitespace-pre-wrap');
     expect(screen.getByRole('link', { name: 'Ada Lovelace' })).toHaveAttribute(
       'href',
       `/users/${AUTHOR.id}`,
@@ -342,5 +347,28 @@ describe('excerpt', () => {
 
   it('cuts long text at a word', () => {
     expect(excerpt('aaaa bbbb cccc', 12)).toBe('aaaa bbbb…');
+  });
+});
+
+describe('paragraphs', () => {
+  it('splits on blank lines and keeps single line breaks', () => {
+    expect(paragraphs('One.\n\nTwo,\n  still two.\r\n \r\nThree.')).toEqual([
+      'One.',
+      'Two,\n  still two.',
+      'Three.',
+    ]);
+  });
+
+  it('drops empty paragraphs and trailing whitespace', () => {
+    expect(paragraphs('\n\nOnly one.  \n\n\n\n')).toEqual(['Only one.']);
+    expect(paragraphs('   ')).toEqual([]);
+  });
+});
+
+describe('readingMinutes', () => {
+  it('rounds at about 230 words a minute, never below 1', () => {
+    expect(readingMinutes('')).toBe(1);
+    expect(readingMinutes('word '.repeat(100))).toBe(1);
+    expect(readingMinutes('word '.repeat(690))).toBe(3);
   });
 });

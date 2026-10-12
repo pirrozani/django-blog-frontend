@@ -167,10 +167,8 @@ describe('UserDetailPage', () => {
     expect(
       await screen.findByRole('heading', { level: 1, name: 'Ada Lovelace' }),
     ).toBeInTheDocument();
-    const meta = screen.getByText(/ada · Joined/);
-    expect(meta).toHaveTextContent(
-      `ada · Joined ${formatBlogDate('2026-01-15')}`,
-    );
+    const meta = screen.getByText(/^Joined/).parentElement;
+    expect(meta).toHaveTextContent(`adaJoined ${formatBlogDate('2026-01-15')}`);
     expect(meta).not.toHaveTextContent('@');
     const titles = (await screen.findAllByRole('heading', { level: 3 })).map(
       (heading) => heading.textContent,

@@ -8,18 +8,21 @@ interface BlogMetaProps {
   className?: string;
 }
 
-/** "Authored by <author> on <date>", with the author linking to their profile. */
-export function BlogMeta({ blog, className = 'mt-2 text-sm' }: BlogMetaProps) {
+/** "By <author>" and the date, with the author linking to their profile. */
+export function BlogMeta({ blog, className = '' }: BlogMetaProps) {
   return (
-    <p className={`text-ink-soft ${className}`}>
-      Authored by{' '}
-      <Link
-        to={`/users/${blog.author.id}`}
-        className="rounded-sm font-medium text-moss underline-offset-4 hover:text-moss-deep hover:underline"
-      >
-        {authorName(blog.author)}
-      </Link>{' '}
-      on{' '}
+    <p
+      className={`flex flex-wrap items-baseline gap-x-4 gap-y-1 text-sm text-ink-muted ${className}`}
+    >
+      <span>
+        By{' '}
+        <Link
+          to={`/users/${blog.author.id}`}
+          className="relative z-10 font-medium text-ink-body transition-colors duration-200 ease-in-out hover:text-accent"
+        >
+          {authorName(blog.author)}
+        </Link>
+      </span>
       <time dateTime={blog.created_at}>{formatBlogDate(blog.created_at)}</time>
     </p>
   );

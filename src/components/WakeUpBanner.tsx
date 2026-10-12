@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { health } from '../api/auth.ts';
+import { SHELL_CLASS } from './shell.ts';
 
 /** How long the server may take before the banner appears. */
 export const WAKE_UP_DELAY_MS = 2_000;
@@ -56,7 +57,9 @@ export function WakeUpBanner() {
   return (
     <div role="status" className="bg-amber-wash text-sm text-amber">
       {visible && (
-        <div className="mx-auto flex max-w-3xl flex-wrap items-center gap-x-4 gap-y-2 px-4 py-2.5 sm:px-6">
+        <div
+          className={`${SHELL_CLASS} flex flex-wrap items-center gap-x-4 gap-y-2 py-2.5`}
+        >
           {status === 'waking' ? (
             <>
               <span

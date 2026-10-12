@@ -1,8 +1,9 @@
-import { Link, Navigate, useParams, useSearchParams } from 'react-router';
+import { Navigate, useParams, useSearchParams } from 'react-router';
 import { ApiError } from '../../api/client.ts';
 import { PAGE_SIZE, toPage } from '../../api/pagination.ts';
 import type { User } from '../../api/types.ts';
 import { EmptyState } from '../../components/EmptyState.tsx';
+import { BackLink } from '../../components/BackLink.tsx';
 import { ErrorState } from '../../components/ErrorState.tsx';
 import { PageTitle } from '../../components/PageTitle.tsx';
 import { Pagination } from '../../components/Pagination.tsx';
@@ -10,6 +11,7 @@ import { Spinner } from '../../components/Spinner.tsx';
 import { parseId, parsePage } from '../../routeParams.ts';
 import { BlogCard } from '../blogs/BlogCard.tsx';
 import { formatBlogDate } from '../blogs/format.ts';
+import { AuthorMonogram } from './AuthorMonogram.tsx';
 import { authorName } from './authorName.ts';
 import { useUser, useUserBlogs } from './queries.ts';
 import { UserNotFound } from './UserNotFound.tsx';
@@ -52,7 +54,7 @@ function UserBlogs({ user }: { user: User }) {
     <>
       <ul
         aria-busy={isPlaceholderData}
-        className={`divide-y divide-mist border-y border-mist transition-opacity ${isPlaceholderData ? 'opacity-60' : ''}`}
+        className={`transition-opacity duration-200 ${isPlaceholderData ? 'opacity-50' : ''}`}
       >
         {items.map((blog) => (
           <li key={blog.id}>
@@ -84,35 +86,36 @@ function UserDetail({ id }: { id: number }) {
 
   // email and mobile are personal data: the demo doesn't show them.
   return (
-    <article>
-      <Link
-        to="/users"
-        className="rounded-sm text-sm font-medium text-moss underline-offset-4 hover:text-moss-deep hover:underline"
-      >
-        All authors
-      </Link>
-      <div className="mt-4">
-        <PageTitle>{authorName(user)}</PageTitle>
-      </div>
-      <p className="mt-3 text-ink-soft">
-        {user.username} · Joined{' '}
-        <time dateTime={user.register_at}>
-          {formatBlogDate(user.register_at)}
-        </time>
-      </p>
+    <div>
+      <BackLink to="/users">All authors</BackLink>
+      <header className="mt-10 flex flex-col gap-6 sm:mt-14 sm:flex-row sm:items-center sm:gap-8">
+        <AuthorMonogram author={user} size="lg" />
+        <div className="min-w-0">
+          <PageTitle>{authorName(user)}</PageTitle>
+          <p className="mt-3 flex flex-wrap gap-x-5 text-ink-muted">
+            <span>{user.username}</span>
+            <span>
+              Joined{' '}
+              <time dateTime={user.register_at}>
+                {formatBlogDate(user.register_at)}
+              </time>
+            </span>
+          </p>
+        </div>
+      </header>
 
-      <section aria-labelledby="author-blogs" className="mt-12">
-        <h2
-          id="author-blogs"
-          className="text-sm font-semibold tracking-wide text-ink-soft uppercase"
-        >
+      <section
+        aria-labelledby="author-blogs"
+        className="mt-16 border-t border-line pt-12 sm:mt-24 sm:pt-16"
+      >
+        <h2 id="author-blogs" className="text-2xl font-medium tracking-tight">
           Blogs
         </h2>
-        <div className="mt-4">
+        <div className="mt-6 sm:mt-8">
           <UserBlogs user={user} />
         </div>
       </section>
-    </article>
+    </div>
   );
 }
 
