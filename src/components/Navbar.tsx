@@ -1,0 +1,39 @@
+import { Link, NavLink } from 'react-router';
+
+const navLinkClass = ({ isActive }: { isActive: boolean }) =>
+  [
+    'rounded-sm px-1 py-0.5 underline-offset-[6px] decoration-2 transition-colors',
+    isActive
+      ? 'text-ink underline decoration-moss'
+      : 'text-ink-soft hover:text-ink',
+  ].join(' ');
+
+// The login link becomes the username + Log out once auth lands (#4).
+export function Navbar() {
+  return (
+    <header className="border-b border-mist">
+      <div className="mx-auto flex max-w-3xl flex-wrap items-baseline justify-between gap-x-6 gap-y-2 px-4 py-4 sm:px-6">
+        <Link
+          to="/blogs"
+          className="font-serif text-xl font-semibold tracking-tight text-ink"
+        >
+          Django Blog
+        </Link>
+        <nav aria-label="Main" className="flex items-baseline gap-5 text-sm">
+          <NavLink to="/blogs" className={navLinkClass}>
+            Blogs
+          </NavLink>
+          <NavLink to="/users" className={navLinkClass}>
+            Authors
+          </NavLink>
+          <Link
+            to="/login"
+            className="rounded-sm font-medium text-moss hover:text-moss-deep"
+          >
+            Log in
+          </Link>
+        </nav>
+      </div>
+    </header>
+  );
+}
