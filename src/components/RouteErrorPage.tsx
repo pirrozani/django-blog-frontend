@@ -1,6 +1,7 @@
 import { isRouteErrorResponse, useRouteError } from 'react-router';
 import { ErrorState } from './ErrorState.tsx';
 import { NotFoundPage } from './NotFoundPage.tsx';
+import { SHELL_CLASS } from './shell.ts';
 
 interface RouteErrorPageProps {
   /** True for the root route, where the Layout (and its `<main>`) failed too. */
@@ -24,8 +25,6 @@ export function RouteErrorPage({ standalone = false }: RouteErrorPageProps) {
 
   if (!standalone) return content;
   return (
-    <main className="mx-auto w-full max-w-3xl px-4 pt-10 pb-16 sm:px-6">
-      {content}
-    </main>
+    <main className={`${SHELL_CLASS} pt-12 pb-24 sm:pt-20`}>{content}</main>
   );
 }

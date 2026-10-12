@@ -1,5 +1,7 @@
 import { Outlet, ScrollRestoration } from 'react-router';
+import { Footer } from './Footer.tsx';
 import { Navbar } from './Navbar.tsx';
+import { SHELL_CLASS } from './shell.ts';
 import { WakeUpBanner } from './WakeUpBanner.tsx';
 
 export function Layout() {
@@ -7,9 +9,10 @@ export function Layout() {
     <div className="flex min-h-screen flex-col">
       <WakeUpBanner />
       <Navbar />
-      <main className="mx-auto w-full max-w-3xl flex-1 px-4 pt-10 pb-16 sm:px-6">
+      <main className={`${SHELL_CLASS} flex-1 pt-10 pb-20 sm:pt-16 sm:pb-28`}>
         <Outlet />
       </main>
+      <Footer />
       <ScrollRestoration />
     </div>
   );

@@ -13,11 +13,14 @@ export function ErrorState({
   onRetry,
 }: ErrorStateProps) {
   return (
-    <div role="alert" className="border-l-4 border-danger py-2 pl-4">
-      <h2 className="text-xl font-semibold">{title}</h2>
-      <p className="mt-1 text-ink-soft">{errorMessage(error)}</p>
+    <div
+      role="alert"
+      className="rounded-3xl bg-danger-wash px-6 py-10 sm:px-12 sm:py-14"
+    >
+      <h2 className="text-2xl font-medium tracking-tight">{title}</h2>
+      <p className="mt-3 max-w-prose text-ink-body">{errorMessage(error)}</p>
       {onRetry && (
-        <Button variant="secondary" className="mt-4" onClick={onRetry}>
+        <Button variant="secondary" className="mt-8" onClick={onRetry}>
           Try again
         </Button>
       )}

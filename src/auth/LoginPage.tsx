@@ -50,8 +50,8 @@ function loginErrorMessage(error: unknown): string {
   return errorMessage(error);
 }
 
-const inputClass =
-  'mt-1 block w-full rounded-md border border-mist bg-white px-3 py-2 text-ink aria-invalid:border-danger';
+const labelClass = 'text-sm font-medium text-ink';
+const errorClass = 'mt-2 text-sm text-danger';
 
 export function LoginPage() {
   const { status, login } = useAuth();
@@ -91,30 +91,27 @@ export function LoginPage() {
   });
 
   return (
-    <section className="max-w-sm">
+    <section className="mx-auto max-w-md sm:pt-8">
       <PageTitle>Log in</PageTitle>
-      <p className="mt-4 text-ink-soft">
+      <p className="mt-6 text-lg text-ink-muted">
         Log in with the shared demo account to write, edit and delete blogs.{' '}
-        <a
-          href={README_URL}
-          className="font-medium text-moss underline underline-offset-4 hover:text-moss-deep"
-        >
+        <a href={README_URL} className="link-accent">
           Demo credentials are in the README.
         </a>
       </p>
 
-      <form onSubmit={onSubmit} noValidate className="mt-8 space-y-5">
+      <form onSubmit={onSubmit} noValidate className="mt-12 space-y-6">
         {errors.root?.server && (
           <p
             role="alert"
-            className="border-l-4 border-danger py-1 pl-3 text-sm text-ink"
+            className="rounded-xl bg-danger-wash px-4 py-3 text-sm text-ink"
           >
             {errors.root.server.message}
           </p>
         )}
 
         <div>
-          <label htmlFor="username" className="text-sm font-medium">
+          <label htmlFor="username" className={labelClass}>
             Username
           </label>
           <input
@@ -125,18 +122,18 @@ export function LoginPage() {
             spellCheck={false}
             aria-invalid={errors.username ? true : undefined}
             aria-describedby={errors.username ? 'username-error' : undefined}
-            className={inputClass}
+            className="field"
             {...register('username')}
           />
           {errors.username && (
-            <p id="username-error" className="mt-1 text-sm text-danger">
+            <p id="username-error" className={errorClass}>
               {errors.username.message}
             </p>
           )}
         </div>
 
         <div>
-          <label htmlFor="password" className="text-sm font-medium">
+          <label htmlFor="password" className={labelClass}>
             Password
           </label>
           <input
@@ -145,17 +142,21 @@ export function LoginPage() {
             autoComplete="current-password"
             aria-invalid={errors.password ? true : undefined}
             aria-describedby={errors.password ? 'password-error' : undefined}
-            className={inputClass}
+            className="field"
             {...register('password')}
           />
           {errors.password && (
-            <p id="password-error" className="mt-1 text-sm text-danger">
+            <p id="password-error" className={errorClass}>
               {errors.password.message}
             </p>
           )}
         </div>
 
-        <Button type="submit" disabled={isSubmitting} className="w-full">
+        <Button
+          type="submit"
+          disabled={isSubmitting}
+          className="mt-2 w-full py-3"
+        >
           {isSubmitting ? 'Logging in…' : 'Log in'}
         </Button>
       </form>
