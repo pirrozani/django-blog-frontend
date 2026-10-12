@@ -6,8 +6,10 @@ import { ComingSoon } from './components/ComingSoon.tsx';
 import { Layout } from './components/Layout.tsx';
 import { NotFoundPage } from './components/NotFoundPage.tsx';
 import { RouteErrorPage } from './components/RouteErrorPage.tsx';
+import { BlogDetailPage } from './features/blogs/BlogDetailPage.tsx';
+import { BlogListPage } from './features/blogs/BlogListPage.tsx';
 
-// Feature pages replace the ComingSoon placeholders in #5–#7.
+// Feature pages replace the ComingSoon placeholders in #6–#7.
 export const routes: RouteObject[] = [
   {
     element: (
@@ -22,7 +24,7 @@ export const routes: RouteObject[] = [
         children: [
           { index: true, element: <Navigate to="/blogs" replace /> },
           { path: 'login', element: <LoginPage /> },
-          { path: 'blogs', element: <ComingSoon title="Blogs" /> },
+          { path: 'blogs', element: <BlogListPage /> },
           {
             element: <RequireAuth />,
             children: [
@@ -33,7 +35,7 @@ export const routes: RouteObject[] = [
               },
             ],
           },
-          { path: 'blogs/:id', element: <ComingSoon title="Blog" /> },
+          { path: 'blogs/:id', element: <BlogDetailPage /> },
           { path: 'users', element: <ComingSoon title="Authors" /> },
           { path: 'users/:id', element: <ComingSoon title="Author" /> },
           { path: '*', element: <NotFoundPage /> },

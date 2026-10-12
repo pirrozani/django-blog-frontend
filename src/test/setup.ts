@@ -14,6 +14,9 @@ if (typeof HTMLDialogElement.prototype.showModal !== 'function') {
   };
 }
 
+// jsdom doesn't scroll; the router's ScrollRestoration calls this.
+window.scrollTo = () => {};
+
 beforeAll(() => server.listen({ onUnhandledRequest: 'error' }));
 afterEach(() => {
   cleanup();
