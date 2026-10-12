@@ -17,8 +17,10 @@
     "gen:api": "node scripts/gen-api.mjs"
   },
   "dependencies": {
+    "@tanstack/react-query": "^5.104.2",
     "react": "^19.2.8",
-    "react-dom": "^19.2.8"
+    "react-dom": "^19.2.8",
+    "react-router": "^7.18.4"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
