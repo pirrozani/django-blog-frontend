@@ -2,10 +2,16 @@ import { apiFetch, type RequestOptions } from './client.ts';
 import type { ListResponse } from './pagination.ts';
 import type { Blog, BlogRequest, PatchedBlogRequest } from './types.ts';
 
+/**
+ * One page of blogs, newest first. A backend that doesn't paginate yet
+ * ignores `?page=` and returns every blog as a plain array.
+ */
 export function listBlogs(
+  page = 1,
   options?: RequestOptions,
 ): Promise<ListResponse<Blog>> {
-  return apiFetch<ListResponse<Blog>>('/api/blogs/', options);
+  const query = page > 1 ? `?page=${page}` : '';
+  return apiFetch<ListResponse<Blog>>(`/api/blogs/${query}`, options);
 }
 
 export function getBlog(id: number, options?: RequestOptions): Promise<Blog> {
