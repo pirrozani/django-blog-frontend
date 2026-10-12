@@ -2,6 +2,7 @@ import { Link, Navigate, useSearchParams } from 'react-router';
 import { ApiError } from '../../api/client.ts';
 import { PAGE_SIZE, toPage } from '../../api/pagination.ts';
 import { useAuth } from '../../auth/AuthContext.ts';
+import { buttonClass } from '../../components/buttonStyles.ts';
 import { EmptyState } from '../../components/EmptyState.tsx';
 import { ErrorState } from '../../components/ErrorState.tsx';
 import { PageTitle } from '../../components/PageTitle.tsx';
@@ -41,10 +42,7 @@ function BlogList() {
         title="No blogs yet"
         action={
           canCreateBlog(user) && (
-            <Link
-              to="/blogs/new"
-              className="font-medium text-moss underline underline-offset-4 hover:text-moss-deep"
-            >
+            <Link to="/blogs/new" className={buttonClass()}>
               Write the first one
             </Link>
           )
@@ -63,13 +61,20 @@ function BlogList() {
     <>
       <ul
         aria-busy={isPlaceholderData}
-        className={`divide-y divide-mist border-y border-mist transition-opacity ${isPlaceholderData ? 'opacity-60' : ''}`}
+        className={`transition-opacity duration-200 ${isPlaceholderData ? 'opacity-50' : ''}`}
       >
-        {items.map((blog) => (
-          <li key={blog.id}>
-            <BlogCard blog={blog} />
-          </li>
-        ))}
+        {items.map((blog, index) =>
+          // On the first page the newest blog leads the feed.
+          page === 1 && index === 0 ? (
+            <li key={blog.id} className="mb-6 border-b border-line pb-6">
+              <BlogCard blog={blog} variant="lead" />
+            </li>
+          ) : (
+            <li key={blog.id}>
+              <BlogCard blog={blog} />
+            </li>
+          ),
+        )}
       </ul>
       <Pagination page={page} totalPages={totalPages} />
     </>
@@ -80,18 +85,20 @@ export function BlogListPage() {
   const { user } = useAuth();
   return (
     <section>
-      <div className="flex flex-wrap items-end justify-between gap-4">
-        <PageTitle>Blogs</PageTitle>
+      <div className="flex flex-wrap items-end justify-between gap-x-8 gap-y-6">
+        <div>
+          <PageTitle>Blogs</PageTitle>
+          <p className="mt-3 text-ink-muted sm:text-lg">
+            Recent writing from every author, newest first.
+          </p>
+        </div>
         {canCreateBlog(user) && (
-          <Link
-            to="/blogs/new"
-            className="inline-flex items-center justify-center rounded-md bg-moss px-4 py-2 text-sm font-medium text-paper transition-colors hover:bg-moss-deep"
-          >
+          <Link to="/blogs/new" className={buttonClass()}>
             New blog
           </Link>
         )}
       </div>
-      <div className="mt-8">
+      <div className="mt-10 sm:mt-12">
         <BlogList />
       </div>
     </section>

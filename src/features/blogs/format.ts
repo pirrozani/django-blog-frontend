@@ -19,3 +19,20 @@ export function excerpt(text: string, max = 200): string {
   const end = lastSpace > max * 0.6 ? lastSpace : max;
   return `${cut.slice(0, end).trimEnd()}…`;
 }
+
+/**
+ * Plain-text paragraphs: split on blank lines, single line breaks kept.
+ * Content stays text; nothing here is ever parsed as HTML.
+ */
+export function paragraphs(text: string): string[] {
+  return text
+    .split(/\r?\n[ \t]*\r?\n/)
+    .map((part) => part.replace(/^[\r\n]+|\s+$/g, ''))
+    .filter((part) => part.trim() !== '');
+}
+
+/** Minutes to read `text` at about 230 words a minute, never less than 1. */
+export function readingMinutes(text: string): number {
+  const words = text.trim().split(/\s+/).filter(Boolean).length;
+  return Math.max(1, Math.round(words / 230));
+}

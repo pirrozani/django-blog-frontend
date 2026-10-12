@@ -18,11 +18,9 @@ import { blogSchema, TITLE_MAX_LENGTH, type BlogValues } from './schema.ts';
 
 const FIELDS = ['title', 'content'] as const;
 
-const inputClass =
-  'mt-1 block w-full rounded-md border border-mist bg-white px-3 py-2 text-ink aria-invalid:border-danger';
-
-const linkClass =
-  'font-medium text-moss underline underline-offset-4 hover:text-moss-deep';
+const labelClass = 'text-sm font-medium text-ink';
+const errorClass = 'mt-2 text-sm text-danger';
+const linkClass = 'link-accent';
 
 /**
  * Puts a failed save on the form: field errors under their fields, anything
@@ -97,18 +95,18 @@ function BlogForm({
   });
 
   return (
-    <form onSubmit={onSubmit} noValidate className="mt-8 space-y-6">
+    <form onSubmit={onSubmit} noValidate className="mt-12 space-y-8">
       {errors.root?.server && (
         <p
           role="alert"
-          className="border-l-4 border-danger py-1 pl-3 text-sm text-ink"
+          className="rounded-xl bg-danger-wash px-4 py-3 text-sm text-ink"
         >
           {errors.root.server.message}
         </p>
       )}
 
       <div>
-        <label htmlFor="title" className="text-sm font-medium">
+        <label htmlFor="title" className={labelClass}>
           Title
         </label>
         <input
@@ -118,18 +116,18 @@ function BlogForm({
           aria-required="true"
           aria-invalid={errors.title ? true : undefined}
           aria-describedby={errors.title ? 'title-error' : undefined}
-          className={inputClass}
+          className="field font-serif text-xl font-medium tracking-tight sm:text-2xl"
           {...register('title')}
         />
         {errors.title && (
-          <p id="title-error" className="mt-1 text-sm text-danger">
+          <p id="title-error" className={errorClass}>
             {errors.title.message}
           </p>
         )}
       </div>
 
       <div>
-        <label htmlFor="content" className="text-sm font-medium">
+        <label htmlFor="content" className={labelClass}>
           Content
         </label>
         <textarea
@@ -138,17 +136,17 @@ function BlogForm({
           aria-required="true"
           aria-invalid={errors.content ? true : undefined}
           aria-describedby={errors.content ? 'content-error' : undefined}
-          className={`${inputClass} font-serif text-lg leading-8`}
+          className="field font-serif text-lg leading-8 text-ink-body"
           {...register('content')}
         />
         {errors.content && (
-          <p id="content-error" className="mt-1 text-sm text-danger">
+          <p id="content-error" className={errorClass}>
             {errors.content.message}
           </p>
         )}
       </div>
 
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-6">
         <Button type="submit" disabled={isSubmitting}>
           {isSubmitting ? pendingLabel : submitLabel}
         </Button>
@@ -166,7 +164,7 @@ function NewBlog() {
 
   if (!canCreateBlog(user)) {
     return (
-      <p className="mt-6 text-ink-soft">
+      <p className="mt-8 text-lg text-ink-muted">
         This account has no author profile, so it can't write blogs.{' '}
         <Link to="/blogs" className={linkClass}>
           Back to blogs
@@ -223,7 +221,7 @@ function FormSection({
   children: ReactNode;
 }) {
   return (
-    <section className="max-w-prose">
+    <section className="mx-auto max-w-3xl">
       <PageTitle>{title}</PageTitle>
       {children}
     </section>
@@ -243,7 +241,7 @@ function EditBlog({ id }: { id: number }) {
     body = <Spinner label="Loading the blog…" />;
   } else if (isError) {
     body = (
-      <div className="mt-6">
+      <div className="mt-10">
         <ErrorState
           error={error}
           title="This blog didn't load"
@@ -253,7 +251,7 @@ function EditBlog({ id }: { id: number }) {
     );
   } else if (!canChangeBlog(user, blog)) {
     body = (
-      <p className="mt-6 text-ink-soft">
+      <p className="mt-8 text-lg text-ink-muted">
         You can only edit your own blogs.{' '}
         <Link to={`/blogs/${blog.id}`} className={linkClass}>
           Back to the blog

@@ -9,10 +9,12 @@ interface EmptyStateProps {
 
 export function EmptyState({ title, children, action }: EmptyStateProps) {
   return (
-    <div className="border-y border-mist py-10">
-      <h2 className="text-xl font-semibold">{title}</h2>
-      {children && <p className="mt-2 max-w-prose text-ink-soft">{children}</p>}
-      {action && <div className="mt-5">{action}</div>}
+    <div className="rounded-3xl bg-wash px-6 py-14 sm:px-12 sm:py-20">
+      <h2 className="text-2xl font-medium tracking-tight">{title}</h2>
+      {children && (
+        <p className="mt-3 max-w-prose text-lg text-ink-muted">{children}</p>
+      )}
+      {action && <div className="mt-8">{action}</div>}
     </div>
   );
 }

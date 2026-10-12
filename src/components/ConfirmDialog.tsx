@@ -56,20 +56,26 @@ export function ConfirmDialog({
         if (pending) dialogRef.current?.showModal();
         else onCancel();
       }}
-      className="m-auto w-[calc(100%-2rem)] max-w-md rounded-lg border border-mist bg-paper p-6 text-ink shadow-xl"
+      className="m-auto w-[calc(100%-2rem)] max-w-md rounded-3xl bg-paper p-8 text-ink-body shadow-float"
     >
-      <h2 id={titleId} className="text-2xl font-semibold">
+      <h2
+        id={titleId}
+        className="text-2xl leading-tight font-medium tracking-tight break-words"
+      >
         {title}
       </h2>
-      <div id={bodyId} className="mt-3 text-ink-soft">
+      <div id={bodyId} className="mt-3 text-ink-muted">
         {children}
       </div>
       {error && (
-        <p role="alert" className="mt-4 text-sm text-danger">
+        <p
+          role="alert"
+          className="mt-5 rounded-xl bg-danger-wash px-4 py-3 text-sm text-danger"
+        >
           {error}
         </p>
       )}
-      <div className="mt-6 flex justify-end gap-3">
+      <div className="mt-8 flex justify-end gap-3">
         <Button
           ref={cancelRef}
           variant="secondary"

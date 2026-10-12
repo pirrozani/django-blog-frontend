@@ -17,12 +17,12 @@ React SPA for the `pirrozani/django-api` backend (Django 5 + DRF: authors and bl
 - **Two kinds of "user".** Login accounts are Django `auth.User` (the demo account): `POST /api/auth/token/` with `{username, password}` → `{"token": "..."}`. `/api/users/` are **authors**, which are content, not login accounts. Call them **"Authors"** in the UI text; routes stay `/users` and `/users/:id` as in `docs/05-frontend-plan.md`, and the API path is `/api/users/`.
 - Auth header: `Authorization: Token <token>`. No cookies, no `credentials: 'include'`.
 - Reads are public. Writes without a token return **401** with `WWW-Authenticate: Token`.
-- `GET /api/auth/me/` → `{id, username, is_staff}`. `POST /api/auth/logout/` → 204, token revoked for **every** session on that account (the demo account is shared).
+- `GET /api/auth/me/` → `{id, username, is_staff, author_id}` (`author_id` is `null` when the account has no author profile). `POST /api/auth/logout/` → 204, token revoked for **every** session on that account (the demo account is shared).
 - Login errors: **400** `{"non_field_errors": [...]}`, **429** when throttled (20/min per IP).
 - Errors: `{"detail": "..."}` or field errors `{"field": ["msg"]}`.
-- **Pagination hasn't landed yet** (backend issue #11). Lists return plain arrays today and will become `{count, next, previous, results}`. Every list read goes through `src/api/pagination.ts`, which accepts both shapes and paginates on the client until the server does.
-- `?search=` and `?author=` haven't landed either: no search in the MVP. An author's blogs come from `GET /api/users/<id>/blogs/` (200 with an empty list when there are none).
-- Blogs embed a read-only `author {id, username, first_name, last_name}`. Writes send `user` (the author id).
+- **Lists are paginated:** `{count, next, previous, results}`, 10 per page, `?page=` and `?page_size=` (max 50). Every list read still goes through `src/api/pagination.ts`, which also accepts a plain array.
+- The backend supports `?search=` (blogs: title; authors: names, username, email) and `?author=<id>` on `/api/blogs/`, but the MVP doesn't use them (search is a stretch item). An author's blogs come from `GET /api/users/<id>/blogs/` (paginated; `count: 0` when there are none).
+- Blogs embed a read-only `author {id, username, first_name, last_name}`. `user` (the author id) is **read-only**: a new blog belongs to the logged-in account's author profile (403 if it has none), and only that author or staff can edit or delete it (403 otherwise). The UI shows write actions only when `author_id` matches `blog.user` or `is_staff`.
 - `POST` → 201 + object, `DELETE` → 204 empty body, `PATCH` supported. **Trailing slash on every path.**
 - Render's free tier sleeps: the first request can take ~1 minute. The wake-up banner pings `GET /api/health/`.
 

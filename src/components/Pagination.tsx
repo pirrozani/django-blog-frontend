@@ -1,12 +1,13 @@
 import type { ReactNode } from 'react';
 import { Link, useSearchParams } from 'react-router';
+import { buttonClass } from './buttonStyles.ts';
 
 interface PaginationProps {
   page: number;
   totalPages: number;
 }
 
-const controlClass = 'rounded-sm px-1 py-0.5 font-medium';
+const controlClass = buttonClass('secondary', 'min-w-28');
 
 function PageControl({
   target,
@@ -21,21 +22,13 @@ function PageControl({
 }) {
   if (target === null) {
     return (
-      <button
-        type="button"
-        disabled
-        className={`${controlClass} cursor-not-allowed text-ink-soft opacity-50`}
-      >
+      <button type="button" disabled className={controlClass}>
         {children}
       </button>
     );
   }
   return (
-    <Link
-      to={{ search }}
-      rel={rel}
-      className={`${controlClass} text-moss underline-offset-4 hover:text-moss-deep hover:underline`}
-    >
+    <Link to={{ search }} rel={rel} className={controlClass}>
       {children}
     </Link>
   );
@@ -57,7 +50,7 @@ export function Pagination({ page, totalPages }: PaginationProps) {
   return (
     <nav
       aria-label="Pagination"
-      className="mt-8 flex items-center justify-between gap-4 text-sm"
+      className="mt-16 flex items-center justify-between gap-4 text-sm"
     >
       <PageControl
         target={page > 1 ? page - 1 : null}
@@ -66,7 +59,7 @@ export function Pagination({ page, totalPages }: PaginationProps) {
       >
         Previous
       </PageControl>
-      <p className="text-ink-soft">
+      <p className="text-ink-muted tabular-nums">
         Page {page} of {totalPages}
       </p>
       <PageControl
