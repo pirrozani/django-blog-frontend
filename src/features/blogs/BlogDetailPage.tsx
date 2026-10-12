@@ -10,7 +10,7 @@ import { ErrorState } from '../../components/ErrorState.tsx';
 import { PageTitle } from '../../components/PageTitle.tsx';
 import { Spinner } from '../../components/Spinner.tsx';
 import { BlogMeta } from './BlogMeta.tsx';
-import { parseBlogId } from './blogId.ts';
+import { parseId } from '../../routeParams.ts';
 import { BlogNotFound } from './BlogNotFound.tsx';
 import { canChangeBlog } from './permissions.ts';
 import { useBlog, useDeleteBlog } from './queries.ts';
@@ -89,7 +89,7 @@ function BlogDetail({ id }: { id: number }) {
 }
 
 export function BlogDetailPage() {
-  const id = parseBlogId(useParams().id);
+  const id = parseId(useParams().id);
   if (id === null) return <BlogNotFound />;
   return <BlogDetail id={id} />;
 }

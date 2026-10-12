@@ -14,9 +14,9 @@ import {
   updateBlog,
 } from '../../api/blogs.ts';
 import { ApiError } from '../../api/client.ts';
-import type { ListResponse } from '../../api/pagination.ts';
 import type { Blog, BlogRequest, PatchedBlogRequest } from '../../api/types.ts';
 import { userKeys } from '../users/queries.ts';
+import { newestFirst } from './order.ts';
 
 export const blogKeys = {
   all: ['blogs'] as const,
@@ -24,20 +24,6 @@ export const blogKeys = {
   list: (page: number) => [...blogKeys.lists(), page] as const,
   detail: (id: number) => [...blogKeys.all, 'detail', id] as const,
 };
-
-/**
- * Newest first (`created_at`, then `id`), as the paginated API orders them.
- * A backend that doesn't paginate yet returns an unordered array: sort it.
- */
-export function newestFirst(data: ListResponse<Blog>): ListResponse<Blog> {
-  if (!Array.isArray(data)) return data;
-  return [...data].sort((a, b) => {
-    if (a.created_at !== b.created_at) {
-      return a.created_at < b.created_at ? 1 : -1;
-    }
-    return b.id - a.id;
-  });
-}
 
 /**
  * Page `page` of the blogs (cut with `toPage`). The previous page stays on

@@ -10,7 +10,7 @@ import { errorMessage } from '../../components/errorMessage.ts';
 import { ErrorState } from '../../components/ErrorState.tsx';
 import { PageTitle } from '../../components/PageTitle.tsx';
 import { Spinner } from '../../components/Spinner.tsx';
-import { parseBlogId } from './blogId.ts';
+import { parseId } from '../../routeParams.ts';
 import { BlogNotFound } from './BlogNotFound.tsx';
 import { canChangeBlog, canCreateBlog } from './permissions.ts';
 import { useBlog, useCreateBlog, useUpdateBlog } from './queries.ts';
@@ -276,7 +276,7 @@ export function BlogFormPage() {
       </FormSection>
     );
   }
-  const id = parseBlogId(rawId);
+  const id = parseId(rawId);
   if (id === null) return <BlogNotFound />;
   return <EditBlog id={id} />;
 }

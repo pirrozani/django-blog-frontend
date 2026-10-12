@@ -2,15 +2,15 @@ import { createBrowserRouter, Navigate, type RouteObject } from 'react-router';
 import { AuthProvider } from './auth/AuthProvider.tsx';
 import { LoginPage } from './auth/LoginPage.tsx';
 import { RequireAuth } from './auth/RequireAuth.tsx';
-import { ComingSoon } from './components/ComingSoon.tsx';
 import { Layout } from './components/Layout.tsx';
 import { NotFoundPage } from './components/NotFoundPage.tsx';
 import { RouteErrorPage } from './components/RouteErrorPage.tsx';
 import { BlogFormPage } from './features/blogs/BlogFormPage.tsx';
 import { BlogDetailPage } from './features/blogs/BlogDetailPage.tsx';
 import { BlogListPage } from './features/blogs/BlogListPage.tsx';
+import { UserDetailPage } from './features/users/UserDetailPage.tsx';
+import { UserListPage } from './features/users/UserListPage.tsx';
 
-// The author pages replace their ComingSoon placeholders in #7.
 export const routes: RouteObject[] = [
   {
     element: (
@@ -34,8 +34,8 @@ export const routes: RouteObject[] = [
             ],
           },
           { path: 'blogs/:id', element: <BlogDetailPage /> },
-          { path: 'users', element: <ComingSoon title="Authors" /> },
-          { path: 'users/:id', element: <ComingSoon title="Author" /> },
+          { path: 'users', element: <UserListPage /> },
+          { path: 'users/:id', element: <UserDetailPage /> },
           { path: '*', element: <NotFoundPage /> },
         ],
       },
