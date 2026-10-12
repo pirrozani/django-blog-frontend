@@ -28,11 +28,17 @@ function blogsReturnArray(blogs: Blog[]) {
   server.use(http.get(url('/api/blogs/'), () => HttpResponse.json(blogs)));
 }
 
-function logIn() {
+/** Logs in as the demo account, which writes as `AUTHOR` by default. */
+function logIn(authorId: number | null = AUTHOR.id) {
   setToken('t0k3n');
   server.use(
     http.get(url('/api/auth/me/'), () =>
-      HttpResponse.json({ id: 1, username: 'demo', is_staff: false }),
+      HttpResponse.json({
+        id: 1,
+        username: 'demo',
+        is_staff: false,
+        author_id: authorId,
+      }),
     ),
   );
 }
@@ -140,12 +146,30 @@ describe('BlogListPage', () => {
     ).not.toBeInTheDocument();
   });
 
-  it('offers "Write the first one" to a logged-in visitor', async () => {
+  it('offers "Write the first one" and "New blog" to a logged-in author', async () => {
     logIn();
     renderRoute('/blogs');
     expect(
       await screen.findByRole('link', { name: 'Write the first one' }),
     ).toHaveAttribute('href', '/blogs/new');
+    expect(screen.getByRole('link', { name: 'New blog' })).toHaveAttribute(
+      'href',
+      '/blogs/new',
+    );
+  });
+
+  it('offers no write links to an account without an author', async () => {
+    logIn(null);
+    renderRoute('/blogs');
+    expect(
+      await screen.findByRole('heading', { name: 'No blogs yet' }),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole('link', { name: 'Write the first one' }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('link', { name: 'New blog' }),
+    ).not.toBeInTheDocument();
   });
 
   it('shows an error with a retry that reloads the list', async () => {
@@ -222,7 +246,23 @@ describe('BlogDetailPage', () => {
     ).not.toBeInTheDocument();
   });
 
-  it('shows Edit and Delete when logged in', async () => {
+  it("hides Edit and Delete on another author's blog", async () => {
+    logIn(99);
+    blogReturns();
+    renderRoute('/blogs/5');
+
+    expect(
+      await screen.findByRole('heading', { level: 1, name: 'Hello there' }),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole('link', { name: 'Edit' }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: 'Delete' }),
+    ).not.toBeInTheDocument();
+  });
+
+  it('shows Edit and Delete on your own blog', async () => {
     logIn();
     blogReturns();
     renderRoute('/blogs/5');

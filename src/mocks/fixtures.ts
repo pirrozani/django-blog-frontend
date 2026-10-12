@@ -34,9 +34,14 @@ export function makeBlogs(count: number): Blog[] {
 /**
  * `GET /api/blogs/` serving `blogs` like DRF's page-number pagination:
  * 10 per page, `?page=N`, 404 "Invalid page." outside the pages.
+ * Pass a function to serve blogs that change between requests.
  */
-export function paginatedBlogsHandler(blogs: Blog[], pageSize = 10) {
+export function paginatedBlogsHandler(
+  source: Blog[] | (() => Blog[]),
+  pageSize = 10,
+) {
   return http.get(`${API_URL}/api/blogs/`, ({ request }) => {
+    const blogs = typeof source === 'function' ? source() : source;
     const page = Number(new URL(request.url).searchParams.get('page') ?? '1');
     const pages = Math.max(1, Math.ceil(blogs.length / pageSize));
     if (!Number.isInteger(page) || page < 1 || page > pages) {
