@@ -3,13 +3,19 @@ import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { describe, expect, it } from 'vitest';
 import { apiFetch } from '../api/client.ts';
+import type { Account } from '../api/types.ts';
 import { API_URL } from '../config.ts';
 import { server } from '../mocks/server.ts';
 import { renderRoute } from '../test/renderRoute.tsx';
 import { getToken, setToken } from './tokenStorage.ts';
 
 const url = (path: string) => `${API_URL}${path}`;
-const DEMO = { id: 1, username: 'demo', is_staff: false };
+const DEMO: Account = {
+  id: 1,
+  username: 'demo',
+  is_staff: false,
+  author_id: null,
+};
 
 function meReturns(account = DEMO) {
   server.use(
@@ -57,7 +63,10 @@ describe('LoginPage', () => {
     ).toBeInTheDocument();
     expect(sent).toEqual({ username: 'demo', password: 'secret' });
     expect(router.state.location.pathname).toBe('/blogs/new');
-    expect(screen.getByText('@demo')).toBeInTheDocument();
+    expect(screen.getByText('demo')).toBeInTheDocument();
+    expect(screen.getByText('demo').parentElement).toHaveTextContent(
+      'Signed in as demo',
+    );
     expect(getToken()).toBe('t0k3n');
   });
 
@@ -141,7 +150,27 @@ describe('AuthProvider', () => {
     setToken('t0k3n');
     meReturns();
     renderRoute('/blogs');
-    expect(await screen.findByText('@demo')).toBeInTheDocument();
+    expect(await screen.findByText('demo')).toBeInTheDocument();
+  });
+
+  it("links the username to the account's author profile", async () => {
+    setToken('t0k3n');
+    meReturns({ ...DEMO, author_id: 31 });
+    renderRoute('/blogs');
+    expect(await screen.findByRole('link', { name: 'demo' })).toHaveAttribute(
+      'href',
+      '/users/31',
+    );
+  });
+
+  it('shows the username as plain text without an author profile', async () => {
+    setToken('t0k3n');
+    meReturns({ ...DEMO, author_id: null });
+    renderRoute('/blogs');
+    expect(await screen.findByText('demo')).toBeInTheDocument();
+    expect(
+      screen.queryByRole('link', { name: 'demo' }),
+    ).not.toBeInTheDocument();
   });
 
   it('drops a revoked token on boot without redirecting', async () => {
@@ -163,7 +192,7 @@ describe('AuthProvider', () => {
     setToken('t0k3n');
     meReturns();
     const { router } = renderRoute('/blogs?page=2');
-    await screen.findByText('@demo');
+    await screen.findByText('demo');
 
     server.use(
       http.get(url('/api/blogs/'), () =>
@@ -183,7 +212,7 @@ describe('AuthProvider', () => {
     setToken('t0k3n');
     meReturns();
     renderRoute('/blogs');
-    await screen.findByText('@demo');
+    await screen.findByText('demo');
 
     server.use(
       http.get(url('/api/blogs/'), async () => {
@@ -195,7 +224,7 @@ describe('AuthProvider', () => {
     await act(() => apiFetch('/api/blogs/').catch(() => undefined));
 
     expect(getToken()).toBe('n3w-t0k3n');
-    expect(screen.getByText('@demo')).toBeInTheDocument();
+    expect(screen.getByText('demo')).toBeInTheDocument();
   });
 
   it('logs out from a protected page to /blogs, not /login', async () => {
@@ -226,6 +255,27 @@ describe('AuthProvider', () => {
     meReturns();
     server.use(http.post(url('/api/auth/logout/'), () => HttpResponse.error()));
     const { router } = renderRoute('/users');
+    const user = userEvent.setup();
+
+    await user.click(await screen.findByRole('button', { name: 'Log out' }));
+
+    expect(
+      await screen.findByRole('link', { name: 'Log in' }),
+    ).toBeInTheDocument();
+    expect(getToken()).toBeNull();
+    expect(router.state.location.pathname).toBe('/blogs');
+  });
+
+  it('logs out while already on /blogs', async () => {
+    setToken('t0k3n');
+    meReturns();
+    server.use(
+      http.post(
+        url('/api/auth/logout/'),
+        () => new HttpResponse(null, { status: 204 }),
+      ),
+    );
+    const { router } = renderRoute('/blogs');
     const user = userEvent.setup();
 
     await user.click(await screen.findByRole('button', { name: 'Log out' }));

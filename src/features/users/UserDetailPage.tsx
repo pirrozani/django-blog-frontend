@@ -95,7 +95,7 @@ function UserDetail({ id }: { id: number }) {
         <PageTitle>{authorName(user)}</PageTitle>
       </div>
       <p className="mt-3 text-ink-soft">
-        @{user.username} · Joined{' '}
+        {user.username} · Joined{' '}
         <time dateTime={user.register_at}>
           {formatBlogDate(user.register_at)}
         </time>

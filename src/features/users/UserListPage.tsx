@@ -24,7 +24,7 @@ function UserRow({ user }: { user: User }) {
             {authorName(user)}
           </Link>
         </h2>
-        <p className="mt-0.5 text-sm text-ink-soft">@{user.username}</p>
+        <p className="mt-0.5 text-sm text-ink-soft">{user.username}</p>
       </div>
       <p className="text-sm text-ink-soft">
         Joined{' '}

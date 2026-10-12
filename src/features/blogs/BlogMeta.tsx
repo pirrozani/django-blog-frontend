@@ -8,11 +8,11 @@ interface BlogMetaProps {
   className?: string;
 }
 
-/** "By <author> on <date>", with the author linking to their profile. */
+/** "Authored by <author> on <date>", with the author linking to their profile. */
 export function BlogMeta({ blog, className = 'mt-2 text-sm' }: BlogMetaProps) {
   return (
     <p className={`text-ink-soft ${className}`}>
-      By{' '}
+      Authored by{' '}
       <Link
         to={`/users/${blog.author.id}`}
         className="rounded-sm font-medium text-moss underline-offset-4 hover:text-moss-deep hover:underline"

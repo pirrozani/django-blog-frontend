@@ -70,7 +70,8 @@ describe('UserListPage', () => {
     expect(
       within(ada).getByRole('link', { name: 'Ada Lovelace' }),
     ).toHaveAttribute('href', `/users/${AUTHOR.id}`);
-    expect(ada).toHaveTextContent('@ada');
+    expect(ada).toHaveTextContent('ada');
+    expect(ada).not.toHaveTextContent('@');
     expect(ada).toHaveTextContent(`Joined ${formatBlogDate('2026-01-15')}`);
     // Personal data stays out of the demo.
     expect(screen.queryByText(/ada@example\.com/)).not.toBeInTheDocument();
@@ -166,9 +167,11 @@ describe('UserDetailPage', () => {
     expect(
       await screen.findByRole('heading', { level: 1, name: 'Ada Lovelace' }),
     ).toBeInTheDocument();
-    expect(screen.getByText(/@ada · Joined/)).toHaveTextContent(
-      `@ada · Joined ${formatBlogDate('2026-01-15')}`,
+    const meta = screen.getByText(/ada · Joined/);
+    expect(meta).toHaveTextContent(
+      `ada · Joined ${formatBlogDate('2026-01-15')}`,
     );
+    expect(meta).not.toHaveTextContent('@');
     const titles = (await screen.findAllByRole('heading', { level: 3 })).map(
       (heading) => heading.textContent,
     );
