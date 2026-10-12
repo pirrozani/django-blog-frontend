@@ -45,6 +45,8 @@
   html {
     color-scheme: light;
     scroll-padding-top: 6rem;
+    /* Keeps focused content clear of the floating Edit/Delete bar. */
+    scroll-padding-bottom: 6rem;
   }
 
   body {
@@ -111,7 +113,7 @@
   }
 
   &:focus {
-    @apply border-accent bg-paper ring-4 ring-accent/15 outline-none;
+    @apply border-accent bg-paper ring-4 ring-accent/30 outline-none;
   }
 
   &[aria-invalid='true'] {

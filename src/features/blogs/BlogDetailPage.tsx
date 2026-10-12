@@ -28,7 +28,11 @@ function BlogActions({ blog }: { blog: Blog }) {
     <>
       {/* Floats at the bottom of the screen while the blog is in view. */}
       <div className="sticky bottom-6 z-30 mt-16 flex justify-center">
-        <div className="flex items-center gap-1 rounded-full bg-paper/75 p-1.5 shadow-float ring-1 ring-black/5 backdrop-blur-xl backdrop-saturate-150">
+        <div
+          role="group"
+          aria-label="Blog actions"
+          className="flex items-center gap-1 rounded-full bg-paper/75 p-1.5 shadow-float ring-1 ring-black/5 backdrop-blur-xl backdrop-saturate-150"
+        >
           <Link
             to={`/blogs/${blog.id}/edit`}
             className={`${actionClass} text-ink hover:bg-wash`}

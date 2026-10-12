@@ -14,7 +14,7 @@ interface BlogCardProps {
 // The title's link covers the whole card (`after:inset-0`); the author link
 // sits above it (`z-10` in BlogMeta) so both stay clickable.
 const cardClass =
-  'group relative -mx-5 rounded-3xl px-5 transition duration-300 ease-in-out hover:-translate-y-0.5 hover:shadow-lift sm:-mx-8 sm:px-8';
+  'group relative -mx-5 rounded-3xl px-5 transition duration-300 ease-in-out hover:-translate-y-0.5 hover:shadow-lift has-[:focus-visible]:shadow-lift sm:-mx-8 sm:px-8';
 
 const titleLinkClass =
   'transition-colors duration-200 ease-in-out group-hover:text-accent-deep after:absolute after:inset-0 after:rounded-3xl';

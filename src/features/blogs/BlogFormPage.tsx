@@ -137,7 +137,6 @@ function BlogForm({
           aria-invalid={errors.content ? true : undefined}
           aria-describedby={errors.content ? 'content-error' : undefined}
           className="field font-serif text-lg leading-8 text-ink-body"
-
           {...register('content')}
         />
         {errors.content && (

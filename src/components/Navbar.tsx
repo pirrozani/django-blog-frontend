@@ -147,12 +147,27 @@ function MobileMenu() {
   }, [open]);
 
   return (
-    <div ref={containerRef} className="md:hidden">
+    <div
+      ref={containerRef}
+      className="md:hidden"
+      onBlur={(event) => {
+        // Tabbing out of the menu closes it, so it never covers the focused
+        // element. A null target (e.g. Safari clicks) is left to pointerdown.
+        const next = event.relatedTarget;
+        if (
+          open &&
+          next instanceof Node &&
+          !event.currentTarget.contains(next)
+        ) {
+          setOpenOn(null);
+        }
+      }}
+    >
       <button
         ref={buttonRef}
         type="button"
         aria-expanded={open}
-        aria-controls="mobile-menu"
+        aria-controls={open ? 'mobile-menu' : undefined}
         onClick={() => setOpenOn(open ? null : location.key)}
         className="-mr-2 flex size-10 items-center justify-center rounded-full text-ink transition-colors duration-200 ease-in-out hover:bg-wash"
       >
@@ -162,7 +177,7 @@ function MobileMenu() {
       {open && (
         <nav
           id="mobile-menu"
-          aria-label="Main"
+          aria-label="Main menu"
           className="absolute inset-x-5 top-full mt-1 flex flex-col gap-1 rounded-3xl bg-paper p-2 shadow-float ring-1 ring-black/5 sm:inset-x-auto sm:right-8 sm:w-72 motion-safe:animate-[menu-in_200ms_ease-out]"
         >
           <NavLink to="/blogs" className={mobileLinkClass}>

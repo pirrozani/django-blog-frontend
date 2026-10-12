@@ -16,7 +16,7 @@ import { useUsers } from './queries.ts';
 function UserRow({ user }: { user: User }) {
   return (
     // The name's link covers the whole card (`after:inset-0`).
-    <article className="group relative flex items-center gap-5 rounded-3xl p-5 transition duration-300 ease-in-out hover:-translate-y-0.5 hover:shadow-lift">
+    <article className="group relative flex items-center gap-5 rounded-3xl p-5 transition duration-300 ease-in-out hover:-translate-y-0.5 hover:shadow-lift has-[:focus-visible]:shadow-lift">
       <AuthorMonogram author={user} />
       <div className="min-w-0">
         <h2 className="text-xl leading-snug font-medium tracking-tight break-words">
