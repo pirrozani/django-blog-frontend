@@ -1,0 +1,22 @@
+# Dependencies and build output
+node_modules/
+dist/
+.wrangler/
+coverage/
+*.tsbuildinfo
+
+# Local env files (VITE_API_URL is public, but local values stay local)
+.env
+.env.*
+!.env.example
+.dev.vars*
+
+# Claude Code personal settings
+.claude/settings.local.json
+
+# Logs and editors
+*.log
+.DS_Store
+.vscode/*
+!.vscode/extensions.json
+.idea/
