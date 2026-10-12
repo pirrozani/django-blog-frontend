@@ -1,6 +1,5 @@
 import { useQueryClient } from '@tanstack/react-query';
 import {
-  startTransition,
   useCallback,
   useEffect,
   useLayoutEffect,
@@ -42,10 +41,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const locationRef = useRef(location);
   const statusRef = useRef(state.status);
   const loggingOutRef = useRef(false);
+  // Key of the location a logout started from; null when none is pending.
+  const logoutFromKeyRef = useRef<string | null>(null);
   useLayoutEffect(() => {
     locationRef.current = location;
     statusRef.current = state.status;
   });
+
+  // Finish a logout once the router has rendered the new location. Going
+  // anonymous earlier, while a protected page is still mounted, makes
+  // RequireAuth redirect to /login instead.
+  useEffect(() => {
+    const fromKey = logoutFromKeyRef.current;
+    if (fromKey === null || location.key === fromKey) return;
+    logoutFromKeyRef.current = null;
+    loggingOutRef.current = false;
+    setState(ANONYMOUS);
+  }, [location]);
 
   // A request that sent a token got 401: the token was revoked (e.g. another
   // visitor logged out of the shared demo account) or expired.
@@ -107,12 +119,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
     clearToken();
     queryClient.clear();
-    // Leave the page first: on a protected page, going anonymous would make
-    // RequireAuth redirect to /login instead. The router commits navigations
-    // in a transition, so the state change joins it rather than racing ahead.
+    // Leave the page first; the effect above goes anonymous once it's left.
+    logoutFromKeyRef.current = locationRef.current.key;
     await navigate('/blogs');
-    loggingOutRef.current = false;
-    startTransition(() => setState(ANONYMOUS));
   }, [navigate, queryClient]);
 
   const value = useMemo(

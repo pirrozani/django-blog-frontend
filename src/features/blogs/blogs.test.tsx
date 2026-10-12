@@ -124,6 +124,9 @@ describe('BlogListPage', () => {
     expect(
       within(card).getByRole('link', { name: 'Ada Lovelace' }),
     ).toHaveAttribute('href', `/users/${AUTHOR.id}`);
+    expect(within(card).getByText(/^Authored by/)).toHaveTextContent(
+      /^Authored by Ada Lovelace on /,
+    );
     expect(within(card).getByText(/^x+…$/).textContent).toHaveLength(201);
     // One page: no pagination.
     expect(
