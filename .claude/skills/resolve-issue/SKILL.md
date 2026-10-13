@@ -22,6 +22,7 @@ Implement exactly one GitHub issue from `pirrozani/django-blog-frontend`.
    - Follow `CLAUDE.md`: stack table, folder layout, code style, MVP scope. New dependencies only if the issue names them; otherwise ask.
    - API calls go through `src/api/`; types come from `src/api/schema.d.ts`. If the schema is missing something the issue needs, run `/api-sync` before coding around it.
    - If the issue is wrong or incomplete compared with the code or the contract, tell the user and propose an issue edit rather than silently deviating. If the **backend** is at fault, draft a backend issue (`/issue --backend`).
+   - For Zod schemas or form validation, check unfamiliar or v3-looking APIs with `mcp__zod__ask-question-about-zod-v4` (one specific question, short answer). Treat its answer as a hint: if it would make you change working code, confirm with `mcp__zod__search-zod-v4-docs` first (~60k characters per query, saved to a file; grep it for the API name) and let `npm run typecheck` be the final check.
    - For visual work, use the `frontend-design` skill if it's available, and keep one consistent look across pages.
 5. **Add the tests** the acceptance criteria ask for (Vitest + RTL, MSW handlers in `src/mocks/`).
 6. **Verify.**
