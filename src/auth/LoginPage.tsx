@@ -9,8 +9,6 @@ import { PageTitle } from '../components/PageTitle.tsx';
 import { Spinner } from '../components/Spinner.tsx';
 import { useAuth } from './AuthContext.ts';
 
-const README_URL = 'https://github.com/pirrozani/django-blog-frontend#readme';
-
 const loginSchema = z.object({
   username: z.string().trim().min(1, 'Enter your username.'),
   password: z.string().min(1, 'Enter your password.'),
@@ -94,10 +92,7 @@ export function LoginPage() {
     <section className="mx-auto max-w-md sm:pt-8">
       <PageTitle>Log in</PageTitle>
       <p className="mt-6 text-lg text-ink-muted">
-        Log in with the shared demo account to write, edit and delete blogs.{' '}
-        <a href={README_URL} className="link-accent">
-          Demo credentials are in the README.
-        </a>
+        Log in with the shared demo account to write, edit and delete blogs.
       </p>
 
       <form onSubmit={onSubmit} noValidate className="mt-12 space-y-6">

@@ -65,7 +65,7 @@ Local backend: `cd ../../django_api_project && uv run python manage.py runserver
 - **Local:** `.env.local` (gitignored). **Template:** `.env.example` (committed, placeholder only).
 - **Production:** set it in the Cloudflare dashboard → Workers & Pages → the worker → Settings → **Build → Variables and secrets** (a *build* variable). Don't use GitHub secrets (Workers Builds builds on Cloudflare, not in GitHub Actions). Don't use `vars` in `wrangler.jsonc` either: those are runtime variables for Worker code and never reach the Vite build.
 - Changing it takes effect only after a **rebuild** (retry the build in Cloudflare or push to `main`).
-- Never put a secret in any `VITE_*` variable, in code, or in the repo. The demo password is shown in the README (it's a public demo account) and nowhere else.
+- Never put a secret in any `VITE_*` variable, in code, or in the repo. The demo credentials are never published: not in the README, the repo, the app or any `VITE_*` variable.
 - When the Worker URL exists, the backend needs it in Render's `CORS_ALLOWED_ORIGINS`: exact origin, `https://`, no trailing slash, no spaces. That's a backend/Render change, so ask first.
 
 ## Claude Code helpers
