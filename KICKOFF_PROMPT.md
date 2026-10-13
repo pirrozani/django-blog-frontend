@@ -54,7 +54,7 @@ Use `/issue` in **batch mode** to draft the 9 MVP issues from "Recommended issue
    - Token in `localStorage` (try/catch wrapper) under one key.
    - `AuthProvider`: calls `me()` on boot when a token exists, exposes `status` = `loading | authenticated | anonymous`, `user`, `login`, `logout`. Logout calls the API, then clears local state even if the call fails.
    - `onUnauthorized` clears the token and query cache and redirects to `/login` with a return path.
-   - `LoginPage`: React Hook Form + Zod; shows `non_field_errors` and a 429 message; redirects to `state.from` or `/blogs`; shows the hint "Demo credentials are in the README" (no password in code).
+   - `LoginPage`: React Hook Form + Zod; shows `non_field_errors` and a 429 message; redirects to `state.from` or `/blogs`; no credentials shown anywhere (they are never published; see issue #9).
    - `RequireAuth`: spinner while loading, redirect when anonymous.
    - Tests: login success (redirects back), wrong password shows the API message, `RequireAuth` redirect.
 5. **FE-04 Blog list + detail** (P1)
@@ -72,7 +72,7 @@ Use `/issue` in **batch mode** to draft the 9 MVP issues from "Recommended issue
    - `npx wrangler deploy --dry-run` and the local `/deploy-check` pass.
    - Then **I** do the dashboard steps (`/deploy-check` prints them), including setting `VITE_API_URL` as a Cloudflare **build** variable and adding the Worker URL to Render's `CORS_ALLOWED_ORIGINS`.
    - Done when `/deploy-check <frontend> <backend>` passes live. This needs the backend live on Render first.
-9. **FE-10 README** (P3): what it is, live link, demo credentials (I'll provide them), screenshots from `/ui-smoke --screenshots`, stack, architecture diagram, local setup, env var policy (`VITE_API_URL` is public and set in Cloudflare build variables, not GitHub), and the token-storage trade-off from `docs/05-frontend-plan.md`.
+9. **FE-10 README** (P3): what it is, live link, no demo credentials (never published; see issue #9), screenshots from `/ui-smoke --screenshots`, stack, architecture diagram, local setup, env var policy (`VITE_API_URL` is public and set in Cloudflare build variables, not GitHub), and the token-storage trade-off from `docs/05-frontend-plan.md`.
 
 ## Phase 3 — Build
 

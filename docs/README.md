@@ -28,7 +28,7 @@ The copied docs link to backend docs that don't exist here (`02-…`, `04-…`, 
 | FE-07 Tests | A few: `ApiError` mapping, pagination normalizer, login flow, `RequireAuth` redirect | Full page coverage |
 | FE-08 Wake-up banner | In | — |
 | FE-09 Deploy | `wrangler.jsonc`, Workers Builds from `main`, `VITE_API_URL` as a build variable, backend CORS updated | Preview-branch builds |
-| FE-10 README | Live link, demo credentials, screenshots, stack, token-storage trade-off | GIF |
+| FE-10 README | Comprehensive README (no demo credentials): live link, screenshots, stack, architecture, setup, token-storage trade-off | GIF |
 | CI | — | GitHub Actions lint/typecheck/test/build |
 
 ## Recommended issue order
@@ -43,7 +43,7 @@ The copied docs link to backend docs that don't exist here (`02-…`, `04-…`, 
 | 6 | Create, edit and delete blogs | FE-04 | P1 |
 | 7 | Author list and profile pages | FE-05 | P2 |
 | 8 | Deploy to Cloudflare Workers | FE-09 | P1 |
-| 9 | README with live demo, credentials and screenshots | FE-10 | P3 |
+| 9 | Comprehensive README documenting the whole project (no demo credentials) | FE-10 | P3 |
 
 Each issue carries its own small tests (FE-07 is spread across them).
 
