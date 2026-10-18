@@ -21,6 +21,69 @@ async function openMenu() {
   return { button, menu };
 }
 
+describe('header colors', () => {
+  it('is a green bar with a white title, links and Log in pill', async () => {
+    renderRoute('/blogs');
+    expect(screen.getByRole('banner')).toHaveClass('bg-accent');
+    expect(screen.getByRole('link', { name: 'Django Blog' })).toHaveClass(
+      'text-paper',
+    );
+
+    const nav = await screen.findByRole('navigation', { name: 'Main' });
+    const blogs = within(nav).getByRole('link', { name: 'Blogs' });
+    const authors = within(nav).getByRole('link', { name: 'Authors' });
+    expect(blogs).toHaveAttribute('aria-current', 'page');
+    expect(blogs).toHaveClass('bg-white/15', 'text-paper');
+    expect(authors).not.toHaveAttribute('aria-current');
+    expect(authors).toHaveClass('text-paper/80');
+
+    const logIn = await within(nav).findByRole('link', { name: 'Log in' });
+    expect(logIn).toHaveClass('bg-paper', 'text-accent');
+  });
+
+  it('shows a white menu button and keeps the panel dark-on-white', async () => {
+    renderRoute('/blogs');
+    const { button, menu } = await openMenu();
+    expect(button).toHaveClass('text-paper');
+
+    const blogs = within(menu).getByRole('link', { name: 'Blogs' });
+    expect(blogs).toHaveAttribute('aria-current', 'page');
+    expect(blogs).toHaveClass('bg-wash', 'text-ink');
+    const logIn = await within(menu).findByRole('link', { name: 'Log in' });
+    expect(logIn).toHaveClass('bg-accent', 'text-paper');
+  });
+
+  it('keeps the signed-in block white on the bar and dark in the panel', async () => {
+    setToken('t0k3n');
+    server.use(
+      http.get(`${API_URL}/api/auth/me/`, () =>
+        HttpResponse.json({
+          id: 1,
+          username: 'demo',
+          is_staff: false,
+          author_id: 7,
+        }),
+      ),
+    );
+    renderRoute('/blogs');
+    const nav = await screen.findByRole('navigation', { name: 'Main' });
+    const barName = await within(nav).findByRole('link', { name: 'demo' });
+    expect(barName).toHaveClass('text-paper');
+    expect(within(nav).getByText(/Signed in as/)).toHaveClass('text-paper/80');
+    expect(within(nav).getByRole('button', { name: 'Log out' })).toHaveClass(
+      'text-paper/80',
+    );
+
+    const { menu } = await openMenu();
+    expect(within(menu).getByRole('link', { name: 'demo' })).toHaveClass(
+      'text-ink',
+    );
+    expect(within(menu).getByRole('button', { name: 'Log out' })).toHaveClass(
+      'text-ink-body',
+    );
+  });
+});
+
 describe('mobile menu', () => {
   it('lists Blogs, Authors and Log in, and closes on navigation', async () => {
     const { router } = renderRoute('/blogs');
