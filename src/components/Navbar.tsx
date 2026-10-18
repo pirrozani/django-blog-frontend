@@ -5,10 +5,10 @@ import { SHELL_CLASS } from './shell.ts';
 
 const navLinkClass = ({ isActive }: { isActive: boolean }) =>
   [
-    'rounded-full px-3 py-1.5 transition-colors duration-200 ease-in-out',
+    'rounded-full px-3 py-1.5 transition-colors duration-200 ease-in-out focus-visible:outline-paper',
     isActive
-      ? 'bg-wash text-ink'
-      : 'text-ink-muted hover:bg-wash hover:text-ink',
+      ? 'bg-white/15 text-paper'
+      : 'text-paper/80 hover:bg-white/10 hover:text-paper',
   ].join(' ');
 
 const mobileLinkClass = ({ isActive }: { isActive: boolean }) =>
@@ -32,7 +32,7 @@ function AccountMenu({ layout }: { layout: 'inline' | 'stacked' }) {
         className={
           stacked
             ? 'mt-1 rounded-2xl bg-accent px-4 py-3 text-center text-base font-medium text-paper transition-colors duration-200 ease-in-out hover:bg-accent-deep'
-            : 'ml-2 rounded-full bg-accent px-4 py-1.5 font-medium text-paper transition duration-200 ease-in-out hover:bg-accent-deep hover:shadow-lift'
+            : 'ml-2 rounded-full bg-paper px-4 py-1.5 font-medium text-accent transition duration-200 ease-in-out hover:bg-accent-wash hover:shadow-lift focus-visible:outline-paper'
         }
       >
         Log in
@@ -44,12 +44,20 @@ function AccountMenu({ layout }: { layout: 'inline' | 'stacked' }) {
     user.author_id != null ? (
       <Link
         to={`/users/${user.author_id}`}
-        className="font-medium text-ink transition-colors duration-200 ease-in-out hover:text-accent"
+        className={
+          stacked
+            ? 'font-medium text-ink transition-colors duration-200 ease-in-out hover:text-accent'
+            : 'font-medium text-paper underline-offset-4 hover:underline focus-visible:outline-paper'
+        }
       >
         {user.username}
       </Link>
     ) : (
-      <span className="font-medium text-ink">{user.username}</span>
+      <span
+        className={stacked ? 'font-medium text-ink' : 'font-medium text-paper'}
+      >
+        {user.username}
+      </span>
     );
 
   const logOutButton = (className: string) => (
@@ -60,7 +68,7 @@ function AccountMenu({ layout }: { layout: 'inline' | 'stacked' }) {
         setLoggingOut(true);
         void logout().finally(() => setLoggingOut(false));
       }}
-      className={`${className} transition-colors duration-200 ease-in-out hover:bg-wash hover:text-ink disabled:opacity-60`}
+      className={`${className} transition-colors duration-200 ease-in-out disabled:opacity-60`}
     >
       {loggingOut ? 'Logging out…' : 'Log out'}
     </button>
@@ -71,16 +79,18 @@ function AccountMenu({ layout }: { layout: 'inline' | 'stacked' }) {
       <div className="mt-1 border-t border-line pt-2">
         <p className="px-4 py-2 text-sm text-ink-muted">Signed in as {name}</p>
         {logOutButton(
-          'w-full rounded-2xl px-4 py-3 text-left text-base text-ink-body',
+          'w-full rounded-2xl px-4 py-3 text-left text-base text-ink-body hover:bg-wash hover:text-ink',
         )}
       </div>
     );
   }
 
   return (
-    <span className="ml-2 flex items-center gap-3 border-l border-line pl-4">
-      <span className="text-ink-muted">Signed in as {name}</span>
-      {logOutButton('rounded-full px-3 py-1.5 font-medium text-ink-muted')}
+    <span className="ml-2 flex items-center gap-3 border-l border-white/20 pl-4">
+      <span className="text-paper/80">Signed in as {name}</span>
+      {logOutButton(
+        'rounded-full px-3 py-1.5 font-medium text-paper/80 enabled:hover:bg-white/10 enabled:hover:text-paper focus-visible:outline-paper',
+      )}
     </span>
   );
 }
@@ -169,7 +179,7 @@ function MobileMenu() {
         aria-expanded={open}
         aria-controls={open ? 'mobile-menu' : undefined}
         onClick={() => setOpenOn(open ? null : location.key)}
-        className="-mr-2 flex size-10 items-center justify-center rounded-full text-ink transition-colors duration-200 ease-in-out hover:bg-wash"
+        className="-mr-2 flex size-10 items-center justify-center rounded-full text-paper transition-colors duration-200 ease-in-out hover:bg-white/10 focus-visible:outline-paper"
       >
         <span className="sr-only">Menu</span>
         <MenuIcon open={open} />
@@ -197,14 +207,14 @@ export function Navbar() {
   const scrolled = useScrolled();
   return (
     <header
-      className={`sticky top-0 z-40 bg-paper/85 backdrop-blur-xl backdrop-saturate-150 transition-shadow duration-300 ease-in-out ${scrolled ? 'shadow-[0_1px_0_var(--color-line)]' : ''}`}
+      className={`sticky top-0 z-40 bg-accent transition-shadow duration-300 ease-in-out ${scrolled ? 'shadow-[0_1px_0_var(--color-accent-deep)]' : ''}`}
     >
       <div
         className={`${SHELL_CLASS} flex items-center justify-between gap-6 py-3 md:py-4`}
       >
         <Link
           to="/blogs"
-          className="font-serif text-xl font-medium tracking-tight text-ink"
+          className="font-serif text-xl font-medium tracking-tight text-paper focus-visible:outline-paper"
         >
           Django Blog
         </Link>
